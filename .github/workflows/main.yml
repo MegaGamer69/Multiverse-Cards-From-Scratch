@@ -1,0 +1,30 @@
+name: Build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: "latest"
+
+      - name: Install CLang
+        run: sudo apt-get install clang
+      
+      - name: Install every Haxelib
+        run: haxelib install lime && haxelib install openfl && haxelib install flixel && haxelib install hxcpp
+
+      - name: Setup every Haxelib
+        run: |
+         haxelib run lime setup windows
+         haxelib run lime build windows
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: .
